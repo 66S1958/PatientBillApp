@@ -1,0 +1,31 @@
+.home {
+  text-align: center;
+}
+.content {
+  min-height: 700px;
+  background-color: aliceblue;
+  padding-left: 30px;
+}
+.header {
+  background-color: #e3f2fd;
+  padding: 20px;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  color: rgb(4, 4, 140);
+  font-size: 25px;
+}
+.footer {
+  padding: 10px;
+  background-color: #e3f2fd;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  color: rgb(4, 4, 140);
+  text-align: center;
+}
+.addAop {
+  border: 10px;
+  border-style: groove;
+  border-color: cornflowerblue;
+  padding: 10px;
+  margin: 15px;
+}
