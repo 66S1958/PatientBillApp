@@ -176,9 +176,9 @@ const AddAppa = () => {
                 }}
               >
                 <option value="Dr.Noor">Dr.Noor</option>
-                <option value="Dr.Fatma">Dr.Fatma</option>
+                {/*<option value="Dr.Fatma">Dr.Fatma</option>
                 <option value="Dr.Anwar">Dr.Anwar</option>
-                <option value="Dr.Ahmed">Dr.Ahmed</option>
+                <option value="Dr.Ahmed">Dr.Ahmed</option>*/}
               </select>
             </td>
             <td>Date :</td>

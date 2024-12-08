@@ -2,6 +2,8 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import PatientModel from "./Models/Patient.js";
+import bcrypt from "bcrypt";
+import PostModel from "./Models/Posts.js";
 
 const app = express();
 
@@ -128,6 +130,81 @@ app.put("/update/:id", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.send({ error: "Failed to update Appointment record" });
+  }
+});
+
+//........................................
+app.post("/registerUser", async (req, res) => {
+  try {
+    const name = req.body.name;
+    const email = req.body.email;
+    const password = req.body.password;
+    const hashedpassword = await bcrypt.hash(password, 10);
+
+    const user = new UserModel({
+      name: name,
+      email: email,
+      password: hashedpassword,
+    });
+
+    await user.save();
+    res.send({ user: user, msg: "Added." });
+  } catch (error) {
+    res.status(500).json({ error: "An error occurred" });
+  }
+});
+
+app.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await UserModel.findOne({ email: email });
+
+    if (!user) {
+      return res.status(500).json({ error: "User not found!" });
+    }
+
+    console.log(user);
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
+      return res.status(401).json({ error: "Authentication failed" });
+    }
+    res.status(200).json({ user, message: "Success." });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post("/logout", async (req, res) => {
+  res.status(200).json({ message: "Logged out successfully" });
+});
+
+//POST API - savePost
+app.post("/savePost", async (req, res) => {
+  try {
+    const postMsg = req.body.postMsg;
+    const email = req.body.email;
+    const post = new PostModel({
+      postMsg: postMsg,
+      email: email,
+    });
+    await post.save();
+    res.send({ post: post, msg: "Added." });
+  } catch (error) {
+    res.status(500).json({ error: "An error occurred" });
+  }
+});
+
+//GET API - getPost
+app.get("/getPosts", async (req, res) => {
+  try {
+    // Fetch all posts from the "PostModel" collection, sorted by createdAt in descending order
+    const posts = await PostModel.find({}).sort({ createdAt: -1 });
+    const countPost = await PostModel.countDocuments({});
+    res.send({ posts: posts, count: countPost });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "An error occurred" });
   }
 });
 
