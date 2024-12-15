@@ -5,7 +5,7 @@ import PatientModel from "./Models/Patient.js";
 import bcrypt from "bcrypt";
 import PostModel from "./Models/Posts.js";
 import UserModel from "./Models/UserModel.js";
-//import * as ENV from "./config.js";
+import * as ENV from "./config.js";
 //import AppointmentModel from "./Models/Appointment .js";
 
 const app = express();
@@ -14,9 +14,8 @@ app.use(express.json());
 app.use(cors());
 
 //Database coneections:
-const connectString =
-  //`mongodb+srv://${ENV.DB_USER}:${ENV.DB_PASSWORD}@${ENV.DB_CLUSTER}/${ENV.DB_NAME}?retryWrites=true&w=majority&appName=PatientCluster`;
-  "mongodb+srv://PatientApp:PatientApp@patientcluster.8e82h.mongodb.net/PatientApp?retryWrites=true&w=majority&appName=PatientCluster";
+const connectString = `mongodb+srv://${ENV.DB_USER}:${ENV.DB_PASSWORD}@${ENV.DB_CLUSTER}/${ENV.DB_NAME}?retryWrites=true&w=majority&appName=PatientCluster`;
+// "mongodb+srv://PatientApp:PatientApp@patientcluster.8e82h.mongodb.net/PatientApp?retryWrites=true&w=majority&appName=PatientCluster";
 mongoose.connect(connectString, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -244,11 +243,11 @@ app.get("/list2", async (req, res) => {
       .json({ error: "An error occurred while fetching appointments." });
   }
 });
-
+/*
 app.listen(3001, () => {
   console.log("Yor are Connected");
-});
-/*const port = ENV.PORT || 3001;
+});*/
+const port = ENV.PORT || 3001;
 app.listen(port, () => {
   console.log(`You are connected at port: ${port}`);
-});*/
+});
