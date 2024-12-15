@@ -14,8 +14,9 @@ app.use(express.json());
 app.use(cors());
 
 //Database coneections:
-const connectString = `mongodb+srv://${ENV.DB_USER}:${ENV.DB_PASSWORD}@${ENV.DB_CLUSTER}/${ENV.DB_NAME}?retryWrites=true&w=majority&appName=PatientCluster`;
-// "mongodb+srv://PatientApp:PatientApp@patientcluster.8e82h.mongodb.net/PatientApp?retryWrites=true&w=majority&appName=PatientCluster";
+const connectString =
+  //`mongodb+srv://${ENV.DB_USER}:${ENV.DB_PASSWORD}@${ENV.DB_CLUSTER}/${ENV.DB_NAME}?retryWrites=true&w=majority&appName=PatientCluster`;
+  "mongodb+srv://PatientApp:PatientApp@patientcluster.8e82h.mongodb.net/PatientApp?retryWrites=true&w=majority&appName=PatientCluster";
 mongoose.connect(connectString, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
