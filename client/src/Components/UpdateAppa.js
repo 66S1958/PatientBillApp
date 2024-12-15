@@ -1,7 +1,7 @@
 import Axios from "axios";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-
+import "../App.css";
 const UpdateAppa = () => {
   const [patId, setpatId] = useState("");
   const [pName, setpName] = useState("");
@@ -17,10 +17,10 @@ const UpdateAppa = () => {
   const [discount, setdiscount] = useState("0 OMR");
   const [responseMsg, setresponseMsg] = useState("");
 
-  let { Pid } = useParams;
+  let { id } = useParams(); // Correctly retrieve the patient ID
 
   const updateAppa = () => {
-    Axios.put(`http://localhost:3001/update/${Pid}`, {
+    Axios.put(`http://localhost:3001/update/${id}`, {
       patId: patId,
       pName: pName,
       phoneNum: phoneNum,
@@ -43,10 +43,8 @@ const UpdateAppa = () => {
   };
 
   useEffect(() => {
-    //specify the URL
-    Axios.get(`http://localhost:3001/getPatient/${Pid}`)
+    Axios.get(`http://localhost:3001/getPatient/${id}`)
       .then((response) => {
-        //take the data from the server response and put them in the state variables
         setpatId(response.data.result.patId);
         setpName(response.data.result.pName);
         setphoneNum(response.data.result.phoneNum);
@@ -58,31 +56,31 @@ const UpdateAppa = () => {
         setconsultFee(response.data.result.consultFee);
         setmedicPrice(response.data.result.medicPrice);
         setbillAmount(response.data.result.billAmount);
-        setmedicPrice(response.data.result.discount);
+        setdiscount(response.data.result.discount);
       })
       .catch((err) => {
         console.log(err);
       });
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     const calculateBill = () => {
-      let billAmount = parseFloat(consultFee) + parseFloat(medicPrice);
-      let discount = (billAmount * 0.2).toFixed(2); // 20% discount
-      setbillAmount(billAmount);
-      setdiscount(discount);
+      let totalBillAmount = parseFloat(consultFee) + parseFloat(medicPrice);
+      let discountAmount = (totalBillAmount * 0.2).toFixed(2); // 20% discount
+      setbillAmount(totalBillAmount.toFixed(2));
+      setdiscount(discountAmount);
     };
     calculateBill();
-  }, [consultFee, medicPrice, billAmount, discount]);
+  }, [consultFee, medicPrice]);
 
   return (
     <div className="row">
       <div className="col-md-10">
-        <table className="table table-striped-columns table-primary">
+        <table className="table table-striped-columns table-co">
           <thead>
             <tr>
               <th colSpan={4} style={{ textAlign: "center" }}>
-                <h3>Update Appointment Details</h3>
+                <h2>Update Appointment Details</h2>
               </th>
             </tr>
           </thead>
@@ -94,10 +92,9 @@ const UpdateAppa = () => {
                   type="text"
                   className="form-control"
                   style={{ width: 400 }}
-                  onChange={(e) => {
-                    setpatId(e.target.value);
-                  }}
-                ></input>
+                  value={patId} // Set value to the state
+                  onChange={(e) => setpatId(e.target.value)}
+                />
               </td>
 
               <td>Patient Name :</td>
@@ -106,10 +103,9 @@ const UpdateAppa = () => {
                   type="text"
                   className="form-control"
                   style={{ width: 400 }}
-                  onChange={(e) => {
-                    setpName(e.target.value);
-                  }}
-                ></input>
+                  value={pName} // Set value to the state
+                  onChange={(e) => setpName(e.target.value)}
+                />
               </td>
             </tr>
 
@@ -120,13 +116,12 @@ const UpdateAppa = () => {
                   type="number"
                   className="form-control"
                   style={{ width: 300 }}
-                  onChange={(e) => {
-                    setphoneNum(e.target.value);
-                  }}
-                ></input>
+                  value={phoneNum} // Set value to the state
+                  onChange={(e) => setphoneNum(e.target.value)}
+                />
               </td>
 
-              <td>Gender:</td>
+              <td>Gender :</td>
               <td>
                 <div className="form-check">
                   <input
@@ -136,9 +131,7 @@ const UpdateAppa = () => {
                     id="male"
                     value="Male"
                     checked={gender === "Male"}
-                    onChange={(e) => {
-                      setgender(e.target.value);
-                    }}
+                    onChange={(e) => setgender(e.target.value)}
                   />
                   <label className="form-check-label" htmlFor="male">
                     Male
@@ -152,9 +145,7 @@ const UpdateAppa = () => {
                     id="female"
                     value="Female"
                     checked={gender === "Female"}
-                    onChange={(e) => {
-                      setgender(e.target.value);
-                    }}
+                    onChange={(e) => setgender(e.target.value)}
                   />
                   <label className="form-check-label" htmlFor="female">
                     Female
@@ -170,10 +161,9 @@ const UpdateAppa = () => {
                   type="number"
                   className="form-control"
                   style={{ width: 200 }}
-                  onChange={(e) => {
-                    setage(e.target.value);
-                  }}
-                ></input>
+                  value={age} // Set value to the state
+                  onChange={(e) => setage(e.target.value)}
+                />
               </td>
               <td>Address :</td>
               <td>
@@ -181,14 +171,11 @@ const UpdateAppa = () => {
                   type="text"
                   className="form-control"
                   style={{ width: 300 }}
-                  onChange={(e) => {
-                    setaddress(e.target.value);
-                  }}
-                ></input>
+                  value={address} // Set value to the state
+                  onChange={(e) => setaddress(e.target.value)}
+                />
               </td>
             </tr>
-
-            <br></br>
 
             <tr>
               <td>Doctor Name : </td>
@@ -197,9 +184,7 @@ const UpdateAppa = () => {
                   className="form-control"
                   style={{ width: 400 }}
                   value={selectOpation}
-                  onChange={(e) => {
-                    setselectOpation(e.target.value);
-                  }}
+                  onChange={(e) => setselectOpation(e.target.value)}
                 >
                   <option value="Dr.Noor">Dr.Noor</option>
                   <option value="Dr.Fatma">Dr.Fatma</option>
@@ -213,10 +198,9 @@ const UpdateAppa = () => {
                   type="date"
                   className="form-control"
                   style={{ width: 400 }}
-                  onChange={(e) => {
-                    setdate(e.target.value);
-                  }}
-                ></input>
+                  value={date} // Set value to the state
+                  onChange={(e) => setdate(e.target.value)}
+                />
               </td>
             </tr>
             <tr>
@@ -226,9 +210,8 @@ const UpdateAppa = () => {
                   type="text"
                   className="form-control"
                   style={{ width: 400 }}
-                  onChange={(e) => {
-                    setconsultFee(e.target.value);
-                  }}
+                  value={consultFee} // Set value to the state
+                  onChange={(e) => setconsultFee(e.target.value)}
                 />
               </td>
 
@@ -238,24 +221,20 @@ const UpdateAppa = () => {
                   type="text"
                   className="form-control"
                   style={{ width: 400 }}
-                  onChange={(e) => {
-                    setmedicPrice(e.target.value);
-                  }}
+                  value={medicPrice} // Set value to the state
+                  onChange={(e) => setmedicPrice(e.target.value)}
                 />
               </td>
             </tr>
 
-            <td></td>
+            <h3>Bill Details</h3>
 
-            <h3>Bill Detailes</h3>
-
-            <h5>Consultation Fee:{consultFee}</h5>
-            <h5>Medicine Price:{medicPrice}</h5>
-            <h5>Discount:{discount}</h5>
-            <h4>Total Bill Amount:{billAmount}</h4>
+            <h5>Consultation Fee: {consultFee}</h5>
+            <h5>Medicine Price: {medicPrice}</h5>
+            <h5>Discount: {discount}</h5>
+            <h3>Total Bill Amount: {billAmount}</h3>
             <tr className="table">
               <td colSpan={4} style={{ textAlign: "center" }}>
-                &nbsp;&nbsp;&nbsp;
                 <button className="btn btn-success" onClick={updateAppa}>
                   Update Appointment
                 </button>

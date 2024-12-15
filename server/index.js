@@ -4,6 +4,9 @@ import cors from "cors";
 import PatientModel from "./Models/Patient.js";
 import bcrypt from "bcrypt";
 import PostModel from "./Models/Posts.js";
+import UserModel from "./Models/UserModel.js";
+//import * as ENV from "./config.js";
+//import AppointmentModel from "./Models/Appointment .js";
 
 const app = express();
 
@@ -12,28 +15,28 @@ app.use(cors());
 
 //Database coneections:
 const connectString =
+  //`mongodb+srv://${ENV.DB_USER}:${ENV.DB_PASSWORD}@${ENV.DB_CLUSTER}/${ENV.DB_NAME}?retryWrites=true&w=majority&appName=PatientCluster`;
   "mongodb+srv://PatientApp:PatientApp@patientcluster.8e82h.mongodb.net/PatientApp?retryWrites=true&w=majority&appName=PatientCluster";
-// "mongodb+srv://patient:patient12345@patbillisys.fxlhqhw.mongodb.net/patientDb?retryWrites=true&w=majority";
-
 mongoose.connect(connectString, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
-//exxpress post to add new Patient Appointment
 app.post("/addPatient", async (req, res) => {
-  const patId = req.body.patId;
-  const pName = req.body.pName;
-  const phoneNum = req.body.phoneNum;
-  const gender = req.body.gender;
-  const age = req.body.age;
-  const address = req.body.address;
-  const drName = req.body.drName;
-  const date = req.body.date;
-  const consultFee = req.body.consultFee;
-  const medicPrice = req.body.medicPrice;
-  const billAmount = req.body.billAmount;
-  const discount = req.body.discount;
+  const {
+    patId,
+    pName,
+    phoneNum,
+    gender,
+    age,
+    address,
+    drName,
+    date,
+    consultFee,
+    medicPrice,
+    billAmount,
+    discount,
+  } = req.body;
 
   const patient = new PatientModel({
     patId: patId,
@@ -49,6 +52,7 @@ app.post("/addPatient", async (req, res) => {
     billAmount: billAmount,
     discount: discount,
   });
+
   await patient.save();
   res.send("Appointment Successfully Added");
 });
@@ -75,11 +79,11 @@ app.delete("/delete/:id", async (req, res) => {
 });
 
 //express GET route for the selected record (the record to be updated)
-app.get("/getPatient/:Pid", async (req, res) => {
+app.get("/getPatient/:id", async (req, res) => {
+  // Change Pid to id
   try {
-    // retrieve the parameter
-    const id = req.params.id;
-    const result = await PatientModel.findById(id); // specify the method to find the record/document
+    const id = req.params.id; // Use the correct parameter name
+    const result = await PatientModel.findById(id);
     const count = await PatientModel.countDocuments();
     res.send({ result, count });
   } catch (err) {
@@ -160,16 +164,16 @@ app.post("/login", async (req, res) => {
     const user = await UserModel.findOne({ email: email });
 
     if (!user) {
-      return res.status(500).json({ error: "User not found!" });
+      return res.status(404).json({ error: "User not found!" }); // Return a 404 if user is not found
     }
 
-    console.log(user);
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) {
-      return res.status(401).json({ error: "Authentication failed" });
+      return res.status(401).json({ error: "Authentication failed" }); // 401 for failed authentication
     }
-    res.status(200).json({ user, message: "Success." });
+
+    res.status(200).json({ user, message: "Login successful." }); // Return a success message with the user info
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -208,6 +212,43 @@ app.get("/getPosts", async (req, res) => {
   }
 });
 
+app.put("/updateAppointment/:id", async (req, res) => {
+  try {
+    const updatedAppointment = await PatientModel.findByIdAndUpdate(
+      req.params.id, // ID from URL
+      req.body, // New data from the client
+      { new: true } // Return the updated document
+    );
+    if (!updatedAppointment) {
+      return res.status(404).json({ error: "Appointment not found" });
+    }
+    res.json(updatedAppointment); // Send the updated data back to the client
+  } catch (error) {
+    console.error("Error updating appointment:", error);
+    res.status(500).json({ error: "Failed to update appointment" });
+  }
+});
+
+// Example route for handling fetching appointments
+app.get("/list2", async (req, res) => {
+  try {
+    const appointments = await PatientModel.find({}); // Adjust based on your model
+    if (appointments.length === 0) {
+      return res.status(404).json({ message: "No appointments found." });
+    }
+    res.status(200).json({ appointments });
+  } catch (err) {
+    console.log(err);
+    res
+      .status(500)
+      .json({ error: "An error occurred while fetching appointments." });
+  }
+});
+
 app.listen(3001, () => {
   console.log("Yor are Connected");
 });
+/*const port = ENV.PORT || 3001;
+app.listen(port, () => {
+  console.log(`You are connected at port: ${port}`);
+});*/

@@ -1,155 +1,119 @@
+import React, { useState, useEffect } from "react";
 import Axios from "axios";
-import { useState, useEffect } from "react";
-
+import { useNavigate } from "react-router-dom";
+import "../App.css";
 const PatientInfo = () => {
-  //useState for each field in form :
-  const [patId, setpatId] = useState("");
-  const [pName, setpName] = useState("");
-  const [phoneNum, setphoneNum] = useState("");
-  const [gender, setgender] = useState("Female");
-  const [age, setage] = useState("");
-  const [address, setaddress] = useState("");
+  const [listOfPatients, setlistOfPatients] = useState([]);
+  const [countRecords, setcountRecords] = useState(0);
+  const navigate = useNavigate();
 
-  /*const PatientInfo = () => {
-    Axios.post("http://localhost:3001/addPatient", {
-      patId: patId,
-      pName: pName,
-      phoneNum: phoneNum,
-      gender: gender,
-      age: age,
-      address: address,
-    })
-    .then((res) => {
-      setresponseMsg(res.data);
-    })
-    .catch((err) => {
-      console.log(err);
-    });*/
+  useEffect(() => {
+    const fetchPatients = async () => {
+      try {
+        const response = await Axios.get("http://localhost:3001/list");
+        const localPatients = JSON.parse(
+          localStorage.getItem("localPatients") || "[]"
+        );
+        const deletedPatients = JSON.parse(
+          localStorage.getItem("deletedPatients") || "[]"
+        );
+        const combinedPatients = [
+          ...response.data.patients,
+          ...localPatients,
+        ].filter((patient) => !deletedPatients.includes(patient.patId));
+        setlistOfPatients(combinedPatients);
+        setcountRecords(combinedPatients.length);
+      } catch (err) {
+        console.error(err);
+        alert("An error occurred while fetching patients.");
+      }
+    };
+    fetchPatients();
+  }, []);
+
+  const deletePatient = (id) => {
+    const updatedList = listOfPatients.filter(
+      (patient) => patient.patId !== id
+    );
+    setlistOfPatients(updatedList);
+    setcountRecords(updatedList.length);
+
+    const deletedPatients = JSON.parse(
+      localStorage.getItem("deletedPatients") || "[]"
+    );
+    deletedPatients.push(id);
+    localStorage.setItem("deletedPatients", JSON.stringify(deletedPatients));
+
+    const localPatients = JSON.parse(
+      localStorage.getItem("localPatients") || "[]"
+    );
+    const updatedLocalPatients = localPatients.filter(
+      (patient) => patient.patId !== id
+    );
+    localStorage.setItem("localPatients", JSON.stringify(updatedLocalPatients));
+  };
+
+  const handleCompletion = (patient) => {
+    // Remove the completed patient from the list
+    deletePatient(patient.patId);
+
+    // Navigate to AddAppa with the patient data
+    navigate("/add", {
+      state: { patient }, // Pass the patient data to the AddAppa page
+    });
+  };
+
+  return (
+    <div>
+      <h1>Patients Information</h1>
+      <table className="table  table-striped-columns" style={{ width: "90%" }}>
+        <thead>
+          <tr>
+            <th>Patient ID</th>
+            <th>Patient Name</th>
+            <th>Number</th>
+            <th>Gender</th>
+            <th>Age</th>
+            <th>Address</th>
+            <th>Complete Appointment Details</th>
+            <th>Delete Patient Information</th>
+          </tr>
+        </thead>
+        <tbody>
+          {listOfPatients.map((patient, index) => (
+            <tr key={patient._id}>
+              <td>{patient.patId}</td>
+              <td>{patient.pName}</td>
+              <td>{patient.phoneNum}</td>
+              <td>{patient.gender}</td>
+              <td>{patient.age}</td>
+              <td>{patient.address}</td>
+              <td>
+                <button
+                  id="removeBtn"
+                  className="btn btn-info"
+                  onClick={() => handleCompletion(patient)}
+                >
+                  Completion
+                </button>
+              </td>
+              <td>
+                <button
+                  className="btn btn-warning"
+                  onClick={() => deletePatient(patient.patId)}
+                >
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <div>
+        <h4 style={{ color: "#164562" }}>Number of Request: {countRecords}</h4>
+      </div>
+    </div>
+  );
 };
-
-return (
-  <div className="addAop container bg-light">
-    <table className="table table-striped-columns table-primary">
-      <thead>
-        <tr class="table">
-          <th colSpan={4} style={{ textAlign: "center" }}>
-            <h3>Add Appointment</h3>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Patient ID :</td>
-          <td>
-            <input
-              type="text"
-              className="form-control"
-              style={{ width: 400 }}
-              onChange={(e) => {
-                setpatId(e.target.value);
-              }}
-            ></input>
-          </td>
-
-          <td>Patient Name :</td>
-          <td>
-            <input
-              type="text"
-              className="form-control"
-              style={{ width: 400 }}
-              onChange={(e) => {
-                setpName(e.target.value);
-              }}
-            ></input>
-          </td>
-        </tr>
-
-        <tr>
-          <td>Number :</td>
-          <td>
-            <input
-              type="number"
-              className="form-control"
-              style={{ width: 300 }}
-              onChange={(e) => {
-                setphoneNum(e.target.value);
-              }}
-            ></input>
-          </td>
-
-          <td>Gender:</td>
-          <td>
-            <div className="form-check">
-              <input
-                className="form-check-input"
-                type="radio"
-                name="gender"
-                id="male"
-                value="Male"
-                checked={gender === "Male"}
-                onChange={(e) => {
-                  setgender(e.target.value);
-                }}
-              />
-              <label className="form-check-label" htmlFor="male">
-                Male
-              </label>
-            </div>
-            <div className="form-check">
-              <input
-                className="form-check-input"
-                type="radio"
-                name="gender"
-                id="female"
-                value="Female"
-                checked={gender === "Female"}
-                onChange={(e) => {
-                  setgender(e.target.value);
-                }}
-              />
-              <label className="form-check-label" htmlFor="female">
-                Female
-              </label>
-            </div>
-          </td>
-        </tr>
-
-        <tr>
-          <td>Age :</td>
-          <td>
-            <input
-              type="number"
-              className="form-control"
-              style={{ width: 200 }}
-              onChange={(e) => {
-                setage(e.target.value);
-              }}
-            ></input>
-          </td>
-          <td>Address :</td>
-          <td>
-            <input
-              type="text"
-              className="form-control"
-              style={{ width: 300 }}
-              onChange={(e) => {
-                setaddress(e.target.value);
-              }}
-            ></input>
-          </td>
-        </tr>
-        <tr className="table">
-          <td colSpan={4} style={{ textAlign: "center" }}>
-            <button className="btn btn-success" onClick={addPatient}>
-              Send My Information to The Doctor
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div>{responseMsg}</div>
-  </div>
-);
 
 export default PatientInfo;

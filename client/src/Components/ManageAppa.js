@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Axios from "axios";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-
+import "../App.css";
 const ManageAppa = () => {
   const [listOfPatients, setlistOfPatients] = useState([]);
   const [countRecords, setcountRecords] = useState(0);
@@ -40,6 +40,7 @@ const ManageAppa = () => {
       });
     }
   };
+
   return (
     <div className="">
       <h1>Manage Patients Appointments</h1>
@@ -100,7 +101,7 @@ const ManageAppa = () => {
         </tbody>
       </table>
       <div>
-        <h4 style={{ color: "green" }}>
+        <h4 style={{ color: "#164562" }}>
           Number of Appointments: {countRecords}
         </h4>
       </div>

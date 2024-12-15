@@ -61,6 +61,7 @@ export const savePost = createAsyncThunk("posts/savePost", async (postData) => {
 export const getPosts = createAsyncThunk("post/getPosts", async () => {
   try {
     const response = await axios.get("http://localhost:3001/getPosts");
+    //const response = await axios.get(`${ENV.SERVER_URL}/getPosts`);
     return response.data.posts;
     console.log(response);
   } catch (error) {

@@ -2,7 +2,7 @@ import { Container, Row, Col, Button } from "reactstrap";
 import { userSchemaValidation } from "../Validations/UserValidations";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-
+import "../App.css";
 import { useSelector, useDispatch } from "react-redux";
 
 import { useState } from "react";
