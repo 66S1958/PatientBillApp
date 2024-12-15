@@ -15,8 +15,8 @@ export const getAppointments = createAsyncThunk(
   "appointments/getAppointments",
   async () => {
     try {
-      const response = await axios.get("http://localhost:3001/appointments");
-      //const response = await axios.get(`${ENV.SERVER_URL}/appointments`);
+      //const response = await axios.get("http://localhost:3001/appointments");
+      const response = await axios.get(`${ENV.SERVER_URL}/appointments`);
       return response.data; // Return appointments data
     } catch (error) {
       console.error("Error fetching appointments:", error);
