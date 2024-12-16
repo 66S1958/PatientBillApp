@@ -12,11 +12,18 @@ import {
   Button,
 } from "reactstrap";
 import "../App.css";
+import Location from "./Location";
+import { useSelector } from "react-redux";
+
 const ViewAppa = ({ id }) => {
   const [listOfPatients, setListOfPatients] = useState(null);
   const [error, setError] = useState(null);
   const [openDetails, setOpenDetails] = useState({}); // State to track which patient's details are expanded
 
+  //--------------------------------------
+  const email = useSelector((state) => state.users.user.email);
+  const name = useSelector((state) => state.users.user.name);
+  //--------------------------------------
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
@@ -65,6 +72,14 @@ const ViewAppa = ({ id }) => {
       <h1 className="text-center mb-4">Appointment Details</h1>
 
       <Row>
+        <div>
+          <p>
+            <Location />
+          </p>
+        </div>
+        <br></br>
+        <br></br>
+        <br></br>
         <Col sm="12">
           <Card>
             <CardBody>
