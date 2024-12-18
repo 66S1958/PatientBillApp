@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-//import * as ENV from "../config";
+import * as ENV from "../config";
 
 const initialState = {
   appointments: [],
@@ -15,8 +15,8 @@ export const getAppointments = createAsyncThunk(
   "appointments/getAppointments",
   async () => {
     try {
-      const response = await axios.get("http://localhost:3001/appointments");
-      //const response = await axios.get(`${ENV.SERVER_URL}/appointments`);
+      //zconst response = await axios.get("http://localhost:3001/appointments");
+      const response = await axios.get(`${ENV.SERVER_URL}/appointments`);
       return response.data; // Return appointments data
     } catch (error) {
       console.error("Error fetching appointments:", error);
@@ -30,24 +30,23 @@ export const saveAppointment = createAsyncThunk(
   "appointments/saveAppointment",
   async (appointmentData) => {
     try {
-      const response = await axios.post(
+      /*const response = await axios.post(
         "http://localhost:3001/saveAppointment",
-        {
-          //const response = await axios.post(`${ENV.SERVER_URL}/saveAppointment`, {
-          patId: appointmentData.patId,
-          pName: appointmentData.pName,
-          phoneNum: appointmentData.phoneNum,
-          gender: appointmentData.gender,
-          age: appointmentData.age,
-          address: appointmentData.address,
-          drName: appointmentData.drName,
-          date: appointmentData.date,
-          consultFee: appointmentData.consultFee,
-          medicPrice: appointmentData.medicPrice,
-          billAmount: appointmentData.billAmount,
-          discount: appointmentData.discount,
-        }
-      );
+        {*/
+      const response = await axios.post(`${ENV.SERVER_URL}/saveAppointment`, {
+        patId: appointmentData.patId,
+        pName: appointmentData.pName,
+        phoneNum: appointmentData.phoneNum,
+        gender: appointmentData.gender,
+        age: appointmentData.age,
+        address: appointmentData.address,
+        drName: appointmentData.drName,
+        date: appointmentData.date,
+        consultFee: appointmentData.consultFee,
+        medicPrice: appointmentData.medicPrice,
+        billAmount: appointmentData.billAmount,
+        discount: appointmentData.discount,
+      });
       return response.data; // Return the new appointment
     } catch (error) {
       console.error("Error saving appointment:", error);
